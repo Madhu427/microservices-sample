@@ -4,12 +4,18 @@ on:
   push:
     branches: [ master ] # Triggers on push to master branch
 
+
 jobs:
   # 1. API SERVICE (Java Maven)
   deploy-api:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}    
       
       - name: Set up JDK
         uses: actions/setup-java@v3
