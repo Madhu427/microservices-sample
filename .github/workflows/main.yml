@@ -2,43 +2,44 @@ name: Microservices Deployment
 
 on:
   push:
-    branches: [ master ] # Triggers on push to master branch
-
+    branches: [ master ]
 
 jobs:
-  # 1. API SERVICE (Java Maven)
-  deploy-api:
+  # api-gateway
+  deploy-service-one:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3      
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-
-      - name: Build API
-        run: cd api-gateway && mvn clean install
-
-      - name: Deploy to Azure Web App
+      - uses: actions/checkout@v4
+      - name: Build Service One
+        run: cd api-gateway && mvn clean install -DskipTests
+      - name: Deploy Service One to Azure
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'madhu-java-app' # CHANGE to your Azure App Name
-          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
+          app-name: 'madhu-java-app' # Unique Azure App Name
+          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
 
-  # 2. FRONTEND SERVICE (Static Web App)
-  deploy-frontend:
+  # service-one
+  deploy-service-two:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Build and Deploy Frontend
-        uses: Azure/static-web-apps-deploy@v1
+      - uses: actions/checkout@v4
+      - name: Build Service Two
+        run: cd service-one && mvn clean install -DskipTests
+      - name: Deploy Service Two to Azure
+        uses: azure/webapps-deploy@v2
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "/web-application" # Folder for your HTML/JS files
- 
+          app-name: 'madhu-java-app' # Unique Azure App Name
+          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
 
-
+  # service-two
+  deploy-service-three:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Service Three
+        run: cd service-three && mvn clean install -DskipTests
+      - name: Deploy Service Three to Azure
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'service-two' # Unique Azure App Name
+          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
