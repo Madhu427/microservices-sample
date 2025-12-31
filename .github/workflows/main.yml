@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build Service One
         run: cd api-gateway && mvn clean install -DskipTests
-      - name: Deploy Service One to Azure
+      - name: Deploy Service api-gateway to Azure
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'madhu-java-app' # Unique Azure App Name
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build Service Two
         run: cd service-one && mvn clean install -DskipTests
-      - name: Deploy Service Two to Azure
+      - name: Deploy Service one to Azure
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'madhu-java-app' # Unique Azure App Name
@@ -41,5 +41,5 @@ jobs:
       - name: Deploy Service Three to Azure
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'service-two' # Unique Azure App Name
+          app-name: 'madhu-java-app' # Unique Azure App Name
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
