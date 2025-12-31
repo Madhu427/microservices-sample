@@ -23,7 +23,7 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'madhu-api-app' # CHANGE to your Azure App Name
+          app-name: 'madhu-java-app' # CHANGE to your Azure App Name
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
 
   # 2. FRONTEND SERVICE (Static Web App)
