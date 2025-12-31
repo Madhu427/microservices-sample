@@ -18,7 +18,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build API
-        run: cd api-service && mvn clean install
+        run: cd api-gateway && mvn clean install
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
