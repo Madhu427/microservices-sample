@@ -49,9 +49,12 @@ jobs:
   deploy-web-application:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: azure/webapps-deploy@v2
         with:
+          app-name: 'madhu-java-app' # Unique Azure App Name
+          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
           node-version: '20'
           cache: 'npm'
           # Required if package-lock.json is in a subfolder
