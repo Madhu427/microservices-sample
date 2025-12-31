@@ -57,11 +57,11 @@ jobs:
           node-version: '20'
           cache: 'npm'
           # Required if package-lock.json is in a subfolder
-          cache-dependency-path: './web-application/package-lock.json'
+          cache-dependency-path: './web-application/package-lock.json' #
 
       - name: Build Frontend
         # Replace 'web-application' with your folder name
         working-directory: ./web-application 
         run: |
           npm install
-          npm run build 
+          npm run build -- --configuration production #
