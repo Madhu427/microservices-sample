@@ -1,0 +1,54 @@
+name: Microservices Deployment
+
+on:
+  push:
+    branches: [ master ] # Triggers on push to master branch
+
+jobs:
+  # 1. API SERVICE (Java Maven)
+  deploy-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+
+      - name: Build API
+        run: cd api-service && mvn clean install
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'madhu-api-app' # CHANGE to your Azure App Name
+          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
+
+  # 2. FRONTEND SERVICE (Static Web App)
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Build and Deploy Frontend
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/frontend" # Folder for your HTML/JS files
+
+  # 3. DATA MIGRATIONS (Azure Functions)
+  deploy-migrations:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Deploy Migration Script
+        uses: Azure/functions-action@v1
+        with:
+          app-name: 'madhu-migration-func' # CHANGE to your Function App Name
+          package: './migrations'
+          publish-profile: ${{ secrets.AZURE_FUNCTION_PUBLISH_PROFILE }}
