@@ -63,5 +63,5 @@ jobs:
         # Replace 'web-application' with your folder name
         working-directory: ./web-application 
         run: |
-          ng install
-          ng run build -- --configuration production
+          npm install
+          npm run build -- --configuration production
