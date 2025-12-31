@@ -64,4 +64,4 @@ jobs:
         working-directory: ./web-application 
         run: |
           npm install
-          npm run build -- --configuration production
+          npm run build 
