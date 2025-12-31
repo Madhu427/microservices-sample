@@ -26,29 +26,4 @@ jobs:
           app-name: 'madhu-java-app' # CHANGE to your Azure App Name
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
 
-  # 2. FRONTEND SERVICE (Static Web App)
-  deploy-frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Build and Deploy Frontend
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "/frontend" # Folder for your HTML/JS files
 
-  # 3. DATA MIGRATIONS (Azure Functions)
-  deploy-migrations:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Deploy Migration Script
-        uses: Azure/functions-action@v1
-        with:
-          app-name: 'madhu-migration-func' # CHANGE to your Function App Name
-          package: './migrations'
-          publish-profile: ${{ secrets.AZURE_FUNCTION_PUBLISH_PROFILE }}
