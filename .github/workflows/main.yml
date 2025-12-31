@@ -6,7 +6,7 @@ on:
 
 jobs:
   # api-gateway
-  deploy-service-one:
+  deploy-api-gateway:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,7 +19,7 @@ jobs:
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
 
   # service-one
-  deploy-service-two:
+  deploy-service-one:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -32,12 +32,12 @@ jobs:
           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
 
   # service-two
-  deploy-service-three:
+  deploy-service-two:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Build Service Three
-        run: cd service-three && mvn clean install -DskipTests
+        run: cd service-two && mvn clean install -DskipTests
       - name: Deploy Service Three to Azure
         uses: azure/webapps-deploy@v2
         with:
