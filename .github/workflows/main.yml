@@ -64,5 +64,4 @@ jobs:
         working-directory: ./web-application 
         run: |
           npm install
-          npm run build -- --configuration production 
-          npm audit fix --force #
+          npm run build -- --configuration production #
