@@ -1,68 +1,94 @@
-name: Microservices Deployment
+# name: Microservices Deployment
 
+# on:
+#   push:
+#     branches: [ master ]
+
+# jobs:
+#   # api-gateway
+#   deploy-api-gateway:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Build Service One
+#         run: cd api-gateway && mvn clean install -DskipTests
+#       - name: Deploy Service api-gateway to Azure
+#         uses: azure/webapps-deploy@v2
+#         with:
+#           app-name: 'madhu-java-app' # Unique Azure App Name
+#           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
+
+#   # service-one
+#   deploy-service-one:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Build Service Two
+#         run: cd service-one && mvn clean install -DskipTests
+#       - name: Deploy Service one to Azure
+#         uses: azure/webapps-deploy@v2
+#         with:
+#           app-name: 'madhu-java-app' # Unique Azure App Name
+#           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
+
+#   # service-two
+#   deploy-service-two:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v4
+#       - name: Build Service Three
+#         run: cd service-two && mvn clean install -DskipTests
+#       - name: Deploy Service Three to Azure
+#         uses: azure/webapps-deploy@v2
+#         with:
+#           app-name: 'madhu-java-app' # Unique Azure App Name
+#           publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
+
+
+# # --- NODE.JS (FRONTEND) STEPS ---
+#   deploy-web-application:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Chekout Code
+#         uses: actions/checkout@v4
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: '18'
+#           cache: 'npm'
+#           # Required if package-lock.json is in a subfolder
+#           cache-dependency-path: './web-application/package-lock.json' #
+
+#       - name: Build Frontend
+#         # Replace 'web-application' with your folder name
+#         working-directory: ./web-application 
+#         run: |
+#           npm install
+#           npm run build -- --configuration production 
+#           npm audit #
+
+
+name: Database Migration and Notify
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
-  # api-gateway
-  deploy-api-gateway:
+  migrate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Build Service One
-        run: cd api-gateway && mvn clean install -DskipTests
-      - name: Deploy Service api-gateway to Azure
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'madhu-java-app' # Unique Azure App Name
-          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
-
-  # service-one
-  deploy-service-one:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build Service Two
-        run: cd service-one && mvn clean install -DskipTests
-      - name: Deploy Service one to Azure
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'madhu-java-app' # Unique Azure App Name
-          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
-
-  # service-two
-  deploy-service-two:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build Service Three
-        run: cd service-two && mvn clean install -DskipTests
-      - name: Deploy Service Three to Azure
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'madhu-java-app' # Unique Azure App Name
-          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE  }}
-
-
-# --- NODE.JS (FRONTEND) STEPS ---
-  deploy-web-application:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Chekout Code
+      - name: Checkout Code
         uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-          # Required if package-lock.json is in a subfolder
-          cache-dependency-path: './web-application/package-lock.json' #
 
-      - name: Build Frontend
-        # Replace 'web-application' with your folder name
-        working-directory: ./web-application 
+      - name: Run SQL Migrations
         run: |
-          npm install
-          npm run build -- --configuration production 
-          npm audit #
+          echo "Executing SQL/Alchemy migrations..."
+          # Your actual migration commands go here
+
+      - name: The Bridge - Trigger GitLab Pipeline
+        if: success() # Only triggers if migrations pass
+        run: |
+          curl --request POST \
+            --form token=${{ secrets.GITLAB_TRIGGER_TOKEN }} \
+            --form ref=master \
+            "https://gitlab.com/api/v4/projects/${{ secrets.GITLAB_PROJECT_ID }}/trigger/pipeline"
